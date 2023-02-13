@@ -1,3 +1,5 @@
+import math
+
 
 class Neuron:
     def __init__(self, value: float):
@@ -19,12 +21,15 @@ class Neuron:
         acc /= len(neurons)
         self.__value = acc
 
+    def activate(self):
+        return max(0.0, self.__value)
+
 
 class Layer:
 
-    def __init__(self, neurons: list[Neuron], weights: list[list[float]]):
+    def __init__(self, neurons: list[Neuron], weights: list[list[float]] = None):
         self.__neurons = neurons
-        self.__weights = weights
+        self.__weights = weights if weights else [1.0 for i in range(len(neurons))]
 
     @property
     def neurons(self):
