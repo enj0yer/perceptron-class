@@ -1,0 +1,5 @@
+/.idea/
+/.git/
+/venv/
+config/hidden.py
+__pycache__/
