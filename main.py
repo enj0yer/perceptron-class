@@ -1,10 +1,11 @@
 import random
 
-from classes import Layer, Neuron
+from classes import Perceptron
 
-if __name__ == "__main__":
+amount_of_neuron = [5, 3, 2]
+inputs = [random.random(), random.random(), random.random(), random.random(), random.random()]
+perceptron = Perceptron(amount_of_neuron, inputs)
 
-    layers_amount = 2
-    neuron_amount = 3
+perceptron.operate()
 
-    layers = [Layer([Neuron() for neuron in range(neuron_amount)], []) for layer in range(layers_amount)]
+print(perceptron.output)

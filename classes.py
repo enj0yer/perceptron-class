@@ -1,80 +1,41 @@
 import math
+import random
 
 
-class Neuron:
-    def __init__(self, value: float):
-        self.__value = value
+class Perceptron:
+    def __init__(self, amount_of_neurons: list[int], inputs: list[float]):
+        self.__amount_of_layers = len(amount_of_neurons)
+        self.__amount_of_neurons = amount_of_neurons
+        self.__weights = None
+        self.__states = None
+        self.__create(inputs)
 
-    @property
-    def value(self):
-        return self.__value
+    def __create(self, inputs: list[float]):
+        self.__weights = [[[random.random() for k in range(self.__amount_of_neurons[i - 1])] for j in range(self.__amount_of_neurons[i])] for i in range(self.__amount_of_layers) if i != 0]
+        self.__states = [[0.0 for j in range(self.__amount_of_neurons[i])] for i in range(self.__amount_of_layers)]
 
-    def calculate(self, neurons: list, weights: list[float]):
-        acc = 0.0
-
-        if len(neurons) != len(weights):
-            raise AttributeError("Length's of neurons and weights are not same.")
-
-        for neuron, weight in zip(neurons, weights):
-            acc += neuron.value * weight
-
-        acc /= len(neurons)
-        self.__value = acc
-
-    def activate(self):
-        return 1 / (1 + math.pow(math.e, -self.__value))
-
-
-class Layer:
-
-    def __init__(self, neurons: list[Neuron], weights: list[list[float]] = None):
-        self.__neurons = neurons
-        self.__weights = weights if weights else [1.0 for i in range(len(neurons))]
-
-    @property
-    def neurons(self):
-        return self.__neurons
-
-    @property
-    def weights(self):
-        return self.__weights
-
-
-class Network:
-
-    def __init__(self, layers: list[Layer]):
-        self.__layers = layers
-
-    @property
-    def layers(self):
-        return self.__layers
-
-    def input_layer(self):
-        return self.__layers[0]
-
-    def output_layer(self):
-        return self.__layers[-1]
-
-    def train(self, iterations: int):
-        for i in range(iterations):
-            for layer in self.__layers:
-                pass
+        for i in range(len(inputs)):
+            self.__states[0][i] = inputs[i]
 
     @staticmethod
-    def vec_product(matrix1: list[float], matrix2: list[float]) -> float:
-        return sum([float(x * y) for x, y in zip(matrix1, matrix2)])
+    def __activate(value: float) -> float:
+        return 1 / (1 + math.exp(-value))
 
-    @staticmethod
-    def matrix_transpose(mat: list[list[float]]) -> list[list[float]]:
-        return [*map(list, zip(*mat))]
+    @property
+    def input(self) -> list[float]:
+        return self.__states[0]
 
-    @staticmethod
-    def matrix_product(matrix1: list[list[float]], matrix2: list[list[float]]):
-        l, n = len(matrix1), len(matrix2[0])
-        ans = [[0.0 for i in range(n)] for j in range(l)]
-        for i in range(l):
-            for j in range(n):
-                vec1 = matrix1[i]
-                vec2 = Network.matrix_transpose(matrix2)[j]
-                ans[i][j] = Network.vec_product(vec1, vec2)
-        return ans
+    @property
+    def output(self) -> list[float]:
+        return self.__states[-1]
+
+    def operate(self):
+        for i in range(1, self.__amount_of_layers):
+            for j in range(self.__amount_of_neurons[i]):
+                state = 0
+                for k in range(self.__amount_of_neurons[i - 1]):
+                    print(i, j, k)
+                    state += self.__states[i - 1][k] * self.__weights[i][j][k]
+
+                self.__states[i][j] = self.__activate(state)
+
