@@ -22,7 +22,7 @@ class Neuron:
         self.__value = acc
 
     def activate(self):
-        return max(0.0, self.__value)
+        return 1 / (1 + math.pow(math.e, -self.__value))
 
 
 class Layer:
