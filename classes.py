@@ -3,9 +3,9 @@ import random
 
 
 class Perceptron:
-    def __init__(self, amount_of_neurons: list[int], inputs: list[float] = None, weights: list[list[list[float]]] = None):
-        self.__amount_of_layers = len(amount_of_neurons)
-        self.__amount_of_neurons = amount_of_neurons
+    def __init__(self, neurons_quantity: list[int], inputs: list[float] = None, weights: list[list[list[float]]] = None):
+        self.__layers_quantity = len(neurons_quantity)
+        self.__neurons_quantity = neurons_quantity
         self.__weights = None
         self.__states = None
         if inputs:
@@ -21,12 +21,12 @@ class Perceptron:
 
     def __create_states(self, multiplier: float = None, summand: float = None):
         if not multiplier and not summand:
-            self.__states = [[0.0 for j in range(self.__amount_of_neurons[i])] for i in range(self.__amount_of_layers)]
+            self.__states = [[0.0 for j in range(self.__neurons_quantity[i])] for i in range(self.__layers_quantity)]
         else:
-            self.__states = [[(random.random() * multiplier + summand) for j in range(self.__amount_of_neurons[i])] for i in range(self.__amount_of_layers)]
+            self.__states = [[(random.random() * multiplier + summand) for j in range(self.__neurons_quantity[i])] for i in range(self.__layers_quantity)]
 
     def __create_weights(self, multiplier: float = 1.0, summand: float = 0.0):
-        self.__weights = [[[(random.random() * multiplier + summand) for k in range(self.__amount_of_neurons[i - 1])] for j in range(self.__amount_of_neurons[i])] for i in range(self.__amount_of_layers) if i != 0]
+        self.__weights = [[[(random.random() * multiplier + summand) for k in range(self.__neurons_quantity[i - 1])] for j in range(self.__neurons_quantity[i])] for i in range(self.__layers_quantity) if i != 0]
 
     def __init_input(self, inputs: list[float]):
         for i in range(len(inputs)):
@@ -58,11 +58,11 @@ class Perceptron:
 
     def operate(self, _input: list[float] = None):
         if _input:
-            self.__init_input(_input)
-        for i in range(1, self.__amount_of_layers):
-            for j in range(self.__amount_of_neurons[i]):
+            self.__create(_input)
+        for i in range(1, self.__layers_quantity):
+            for j in range(self.__neurons_quantity[i]):
                 state = 0
-                for k in range(self.__amount_of_neurons[i - 1]):
+                for k in range(self.__neurons_quantity[i - 1]):
                     state += self.__states[i - 1][k] * self.__weights[i - 1][j][k]
 
                 self.__states[i][j] = self.__activate(state)
@@ -71,4 +71,4 @@ class Perceptron:
         pass
 
     def __str__(self):
-        return self.output
+        return self.output.__str__()
