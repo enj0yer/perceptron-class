@@ -29,13 +29,20 @@ class Perceptron:
     def output(self) -> list[float]:
         return self.__states[-1]
 
-    def operate(self):
+    def operate(self, iterations: int = 1):
+        for _ in range(iterations):
+            self.__forward()
+            self.__back_propagation()
+
+    def __forward(self):
         for i in range(1, self.__amount_of_layers):
             for j in range(self.__amount_of_neurons[i]):
                 state = 0
                 for k in range(self.__amount_of_neurons[i - 1]):
                     print(i, j, k)
-                    state += self.__states[i - 1][k] * self.__weights[i][j][k]
+                    state += self.__states[i - 1][k] * self.__weights[i - 1][j][k]
 
                 self.__states[i][j] = self.__activate(state)
 
+    def __back_propagation(self):
+        pass
