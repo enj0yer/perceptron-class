@@ -68,18 +68,23 @@ class Perceptron:
 
                 self.__states[i][j] = self.__activate(state)
 
-    def study(self, inputs: list[list[float]], outputs: list[list[float]], epoches: int = None):
-        epoches = len(inputs)
-        assert epoches == len(outputs), "Epoches amount error"
+    @staticmethod
+    def __output_error(output: list[float], expected: list[float]):
+        pass        
+
+    def study(self, inputs: list[list[float]], outputs: list[list[float]], speed: float, moment: float, epoches: int = 1):
+        assert len(inputs) == len(outputs), "Images quantity in inputs and outputs are not equal."
         for epoche in range(epoches):
-            self.operate(inputs[epoche])
-            error = reduce(lambda acc, x: acc + x,
-                           [(waiting - actual) ** 2 for actual, waiting in zip(self.output, outputs[epoche])]) / 2
-            for layer_index in range(self.__layers_quantity - 1, 0, -1):
-                for neuron_index in range(self.__neurons_quantity[layer_index]):
-                    for weight_index in range(self.__neurons_quantity[layer_index - 1]):
-                        # Найти формулу для вычисления дельты весов
-                        self.__weights[layer_index - 1][neuron_index][weight_index] += -0.2 #* (error / self.__weights[layer_index - 1][neuron_index][weight_index])
+            for image in range(len(inputs)):
+                self.operate(inputs[image])
+                curr_error = 0.0
+                prev_error = 0.0
+                for layer_index in range(self.__layers_quantity - 1, 1, -1):
+                    curr_error = reduce(lambda acc, x: acc + x, [(waiting - actual) ** 2 for actual, waiting in zip(self.output, outputs[image])])
+                    for neuron_index in range(self.__neurons_quantity[layer_index]):
+                        for weight_index in range(self.__neurons_quantity[layer_index - 1]):
+                            # TODO Доделать обучение, пользуясь данными этой статьи https://microtechnics.ru/obuchenie-nejronnyh-setej-obratnoe-rasprostranenie-oshibki/
+                            self.__weights[layer_index - 1][neuron_index][weight_index] += -speed
 
     def __str__(self):
         return self.output.__str__()
