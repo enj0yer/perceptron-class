@@ -1,5 +1,6 @@
 import math
 import random
+from functools import reduce
 
 
 class Perceptron:
@@ -67,8 +68,18 @@ class Perceptron:
 
                 self.__states[i][j] = self.__activate(state)
 
-    def study(self, inputs: list[list[float]], outputs: list[list[float]], epoches: int = 1):
-        pass
+    def study(self, inputs: list[list[float]], outputs: list[list[float]], epoches: int = None):
+        epoches = len(inputs)
+        assert epoches == len(outputs), "Epoches amount error"
+        for epoche in range(epoches):
+            self.operate(inputs[epoche])
+            error = reduce(lambda acc, x: acc + x,
+                           [(waiting - actual) ** 2 for actual, waiting in zip(self.output, outputs[epoche])]) / 2
+            for layer_index in range(self.__layers_quantity - 1, 0, -1):
+                for neuron_index in range(self.__neurons_quantity[layer_index]):
+                    for weight_index in range(self.__neurons_quantity[layer_index - 1]):
+                        # Найти формулу для вычисления дельты весов
+                        self.__weights[layer_index - 1][neuron_index][weight_index] += -0.2 #* (error / self.__weights[layer_index - 1][neuron_index][weight_index])
 
     def __str__(self):
         return self.output.__str__()
