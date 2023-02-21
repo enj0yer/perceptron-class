@@ -1,13 +1,109 @@
+import random
 
 from classes import Perceptron
 
-input_amount = 400
-output_amount = 10
+epoches_amount = 100
 
-amount_of_neuron = [input_amount, 25, output_amount]
+input_amount = 2
+output_amount = 1
+
+amount_of_neuron = [input_amount, output_amount]
 perceptron = Perceptron(amount_of_neuron)
 
+inputs = [
+    [0, 0],
+    [0, 1],
+    [1, 0],
+    [1, 1],
+    [0, 0],
+    [0, 1],
+    [1, 0],
+    [1, 1],
+    [0, 0],
+    [0, 1],
+    [1, 0],
+    [1, 1],
+    [0, 0],
+    [0, 1],
+    [1, 0],
+    [1, 1],
+    [0, 0],
+    [0, 1],
+    [1, 0],
+    [1, 1],
+    [0, 0],
+    [0, 1],
+    [1, 0],
+    [1, 1],
+    [0, 0],
+    [0, 1],
+    [1, 0],
+    [1, 1],
+    [0, 0],
+    [0, 1],
+    [1, 0],
+    [1, 1],
+    [0, 0],
+    [0, 1],
+    [1, 0],
+    [1, 1],
+    [0, 0],
+    [0, 1],
+    [1, 0],
+    [1, 1],
+    [0, 0],
+    [0, 1],
+    [1, 0],
+    [1, 1]
+]
+output = [
+    [0],
+    [1],
+    [1],
+    [0],
+    [0],
+    [1],
+    [1],
+    [0],
+    [0],
+    [1],
+    [1],
+    [0],
+    [0],
+    [1],
+    [1],
+    [0],
+    [0],
+    [1],
+    [1],
+    [0],
+    [0],
+    [1],
+    [1],
+    [0],
+    [0],
+    [1],
+    [1],
+    [0],
+    [0],
+    [1],
+    [1],
+    [0],
+    [0],
+    [1],
+    [1],
+    [0],
+    [0],
+    [1],
+    [1],
+    [0],
+    [0],
+    [1],
+    [1],
+    [0]
+]
 
-perceptron.operate([(i + i) for i in range(input_amount)])
+perceptron.study(inputs, output)
+perceptron.operate([1, 0])
 
 print(perceptron)
