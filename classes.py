@@ -69,22 +69,21 @@ class Perceptron:
                 self.__states[i][j] = self.__activate(state)
 
     @staticmethod
-    def __output_error(output: list[float], expected: list[float]):
-        pass        
+    def __output_error(current: list[float], expected: list[float]):
+        return reduce(lambda acc, x: acc + x, [(expect - curr) ** 2 for expect, curr in zip(expected, current)])
 
     def study(self, inputs: list[list[float]], outputs: list[list[float]], speed: float, moment: float, epoches: int = 1):
         assert len(inputs) == len(outputs), "Images quantity in inputs and outputs are not equal."
         for epoche in range(epoches):
             for image in range(len(inputs)):
                 self.operate(inputs[image])
-                curr_error = 0.0
-                prev_error = 0.0
+                prev_layer_error = 0.0
                 for layer_index in range(self.__layers_quantity - 1, 1, -1):
-                    curr_error = reduce(lambda acc, x: acc + x, [(waiting - actual) ** 2 for actual, waiting in zip(self.output, outputs[image])])
+                    curr_error = self.__output_error()
                     for neuron_index in range(self.__neurons_quantity[layer_index]):
                         for weight_index in range(self.__neurons_quantity[layer_index - 1]):
-                            # TODO Доделать обучение, пользуясь данными этой статьи https://microtechnics.ru/obuchenie-nejronnyh-setej-obratnoe-rasprostranenie-oshibki/
                             self.__weights[layer_index - 1][neuron_index][weight_index] += -speed
+                    prev_layer_error = curr_error
 
     def __str__(self):
         return self.output.__str__()
