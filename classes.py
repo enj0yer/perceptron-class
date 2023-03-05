@@ -1,16 +1,33 @@
+from ast import Str
+from base64 import encode
+import json
 import math
 import random
 from functools import reduce
+import re
+
 
 
 class Perceptron:
-    def __init__(self, neurons_quantity: list[int], inputs: list[float] = None, weights: list[list[list[float]]] = None):
+
+    name_regex = "^[A-Za-z_][A-Za-z0-9_]{0,}$"
+
+    def __init__(self, name: str, neurons_quantity: list[int], inputs: list[float] = None, weights: list[list[list[float]]] = None):
+        if self.__check_name(name):
+            self.__name = name
+        else:
+            raise ValueError(f"Name of Perceptron must be compatible with {self.name_regex} regex.")
         self.__layers_quantity = len(neurons_quantity)
         self.__neurons_quantity = neurons_quantity
         self.__weights = None
         self.__states = None
         if inputs:
             self.__create(inputs, weights)
+
+
+    @classmethod
+    def __check_name(cls, name: str):
+        return bool(re.search(cls.name_regex, name))
 
     def __create(self, inputs: list[float], weights: list[list[list[float]]] = None):
         self.__create_states()
@@ -38,6 +55,10 @@ class Perceptron:
         return 1 / (1 + math.exp(-value))
 
     @property
+    def name(self):
+        return self.__name
+
+    @property
     def input(self) -> list[float]:
         return self.__states[0]
 
@@ -57,6 +78,18 @@ class Perceptron:
     def weights(self, _weights):
         self.__weights = _weights
 
+    def import_weights(self):
+        try:
+            with open(f"weights\{self.name}_weights.pew" , "r", encoding="utf-8") as weights_file:
+                weights = json.loads(weights_file.read())
+                self.weights = weights
+        except Exception as error:
+            print(f"Excepted with {type(error)}: File for import does not exist.")
+
+    def export_weights(self):
+        with open(f"weights\{self.name}_weights.pew" , "w", encoding="utf-8") as weights_file:
+            weights_file.write(json.dumps(self.weights))
+
     def operate(self, _input: list[float] = None):
         if _input:
             self.__create(_input)
@@ -75,15 +108,14 @@ class Perceptron:
     def study(self, inputs: list[list[float]], outputs: list[list[float]], speed: float, moment: float, epoches: int = 1):
         assert len(inputs) == len(outputs), "Images quantity in inputs and outputs are not equal."
         for epoche in range(epoches):
-            for image in range(len(inputs)):
-                self.operate(inputs[image])
-                prev_layer_error = 0.0
-                for layer_index in range(self.__layers_quantity - 1, 1, -1):
-                    curr_error = self.__output_error()
-                    for neuron_index in range(self.__neurons_quantity[layer_index]):
-                        for weight_index in range(self.__neurons_quantity[layer_index - 1]):
-                            self.__weights[layer_index - 1][neuron_index][weight_index] += -speed
-                    prev_layer_error = curr_error
+            for image_index in range(len(inputs)):
+                self.operate(inputs[image_index])
+                self.propagate_error_backward(self.output, speed, moment)
+                
+
+    def propagate_error_backward(self, image_outputs: list[float], speed: float, moment: float):
+        pass
 
     def __str__(self):
         return self.output.__str__()
+    
